@@ -49,8 +49,8 @@ resource "azurerm_resource_group" "tf101" {
   }
 }
 
-resource "azurerm_virtual_network" "vnet101" {
-  name = "tfvnet101"
+resource "azurerm_virtual_network" "vnet104" {
+  name = "tfvnet104"
   location = azurerm_resource_group.tf101.location
   resource_group_name = azurerm_resource_group.tf101.name
   address_space = ["10.0.0.0/16"]
@@ -97,135 +97,5 @@ resource "azurerm_network_interface" "tflablenic" {
     subnet_id = azurerm_subnet.tflabelwebsubnet101.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id = azurerm_public_ip.webserverip.id
-  }
-}
-
-resource "azurerm_linux_virtual_machine" "tfvm" {
-  name = "tfvm101"
-  resource_group_name = azurerm_resource_group.tf101.name
-  location = azurerm_resource_group.tf101.location
-  size = "Standard_F2"
-  admin_username = "adminuser"
-  network_interface_ids = [
-    azurerm_network_interface.tflablenic.id,
-  ]
-
-  admin_ssh_key {
-    username = "adminuser"
-    public_key = file("~/.ssh/id_rsa.pub")
-  }
-
-  os_disk {
-    caching = "ReadWrite"
-    storage_account_type = "Standard_LRS"
-  }
-
-  source_image_reference {
-    publisher = "Canonical"
-    offer = "UbuntuServer"
-    sku = "16.04-LTS"
-    version   = "latest"
-  }
-}
-
-resource "azurerm_public_ip" "appserverip" {
-  name = "tfapppublicip"
-  resource_group_name = azurerm_resource_group.tf101.name
-  location = azurerm_resource_group.tf101.location
-  allocation_method = "Static"
-  tags = {
-    "name" = "appserverip"
-  }
-}
-
-resource "azurerm_network_interface" "tflablenicapp" {
-  name = "tfappnic"
-  location = azurerm_resource_group.tf101.location
-  resource_group_name = azurerm_resource_group.tf101.name
-
-  ip_configuration {
-    name = "external"
-    subnet_id = azurerm_subnet.tflabelappsubnet101.id
-    private_ip_address_allocation = "Dynamic"
-    public_ip_address_id = azurerm_public_ip.appserverip.id
-  }
-}
-
-resource "azurerm_linux_virtual_machine" "tfvmapp" {
-  name = "tfvm102"
-  resource_group_name = azurerm_resource_group.tf101.name
-  location = azurerm_resource_group.tf101.location
-  size = "Standard_F2"
-  admin_username = "adminuser"
-  network_interface_ids = [
-    azurerm_network_interface.tflablenicapp.id,
-  ]
-
-  admin_ssh_key {
-    username = "adminuser"
-    public_key = file("~/.ssh/id_rsa.pub")
-  }
-
-  os_disk {
-    caching = "ReadWrite"
-    storage_account_type = "Standard_LRS"
-  }
-
-  source_image_reference {
-    publisher = "Canonical"
-    offer = "UbuntuServer"
-    sku = "16.04-LTS"
-    version   = "latest"
-  }
-}
-
-resource "azurerm_public_ip" "dbserverip" {
-  name = "tfdbpublicip"
-  resource_group_name = azurerm_resource_group.tf101.name
-  location = azurerm_resource_group.tf101.location
-  allocation_method = "Static"
-  tags = {
-    "name" = "dbserverip"
-  }
-}
-
-resource "azurerm_network_interface" "tflablenicdb" {
-  name = "tfdbnic"
-  location = azurerm_resource_group.tf101.location
-  resource_group_name = azurerm_resource_group.tf101.name
-
-  ip_configuration {
-    name = "external"
-    subnet_id = azurerm_subnet.tflabeldbsubnet101.id
-    private_ip_address_allocation = "Dynamic"
-    public_ip_address_id = azurerm_public_ip.dbserverip.id
-  }
-}
-
-resource "azurerm_linux_virtual_machine" "tfvmdb" {
-  name = "tfvm103"
-  resource_group_name = azurerm_resource_group.tf101.name
-  location = azurerm_resource_group.tf101.location
-  size = "Standard_F2"
-  admin_username = "adminuser"
-  network_interface_ids = [
-    azurerm_network_interface.tflablenicdb.id,
-  ]
-
-  admin_ssh_key {
-    username = "adminuser"
-    public_key = file("~/.ssh/id_rsa.pub")
-  }
-
-  os_disk {
-    caching = "ReadWrite"
-    storage_account_type = "Standard_LRS"
-  }
-
-  source_image_reference {
-    publisher = "Canonical"
-    offer = "UbuntuServer"
-    sku = "16.04-LTS"
-    version   = "latest"
   }
 }
