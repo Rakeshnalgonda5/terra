@@ -49,8 +49,8 @@ resource "azurerm_resource_group" "tf101" {
   }
 }
 
-resource "azurerm_virtual_network" "vnet104" {
-  name = "tfvnet104"
+resource "azurerm_virtual_network" "vnet101" {
+  name = "tfvnet101"
   location = azurerm_resource_group.tf101.location
   resource_group_name = azurerm_resource_group.tf101.name
   address_space = ["10.0.0.0/16"]
